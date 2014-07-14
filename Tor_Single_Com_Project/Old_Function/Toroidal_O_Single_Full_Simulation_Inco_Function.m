@@ -1,0 +1,503 @@
+function     Toroidal_O_Single_Full_Simulation_Inco_Function(Pmp,Pse,Psi,M)
+
+%Full simulation program with Incoherent pulse (Object oriented)
+%save Time Energy
+%record mov
+%record trimmed psi
+fprintf('\nSingle component full simulation program.\n')
+tic;
+N=Pmp.N;
+XYmax=Pmp.XYmax;
+
+TotalTime=Pmp.TotalTime;
+dt=Pmp.dt;
+
+%% Coefficients in the ODGPE: (parameters from the PRA)
+ua=Pmp.ua; %same spin polariton-polariton scattering
+gR=Pmp.gR; %LP interaction with incoherent reservoir
+GammaC=Pmp.GammaC;
+GammaR=Pmp.GammaR; % GammaR_ratio=GammaR/GammaC
+R=Pmp.R; %stimulated scattering rate
+hspace=Pmp.hspace;
+
+%% Construct Pump
+Pmp.Build_u();
+Pump=abs(Pmp.u).^2; % Intensity
+
+%calculate effective Pump power P_eff
+N_mid=floor(N/2+1);
+P_th=Pmp.P0;
+Pth_cutoff=1;
+P_eff=-1;
+for it=N_mid:N
+    if Pump(it,N_mid)>=(P_th*Pth_cutoff)
+        N1_P_eff=it;
+        break;
+    end
+end
+for it=(N1_P_eff+1):N
+    if Pump(it,N_mid)<=((P_th*Pth_cutoff))
+        N2_P_eff=it;
+        break;
+    end
+end
+if N2_P_eff>N1_P_eff
+    r_b=(N1_P_eff-N_mid)*hspace;
+    r_e=(N2_P_eff-N_mid)*hspace;
+    P_eff=(sum(Pump(N1_P_eff:N2_P_eff,N_mid))/length(N1_P_eff:N2_P_eff))/P_th;
+end
+
+%% Construct Pulse
+Pse.Build_u();
+Pulse_add_flag=0; %stage: 0:pump only, 1:pump+pulse, 2:pulse ended
+
+%% Construct lattice size and k vector space
+x=Pmp.x;
+y=Pmp.y;
+kvector=fftshift(-N/2:N/2-1)*2*pi/(2*XYmax);
+[kx, ky]=meshgrid(kvector, kvector);
+kinetic_factor_quarter=exp((-1i*(kx.^2+ky.^2)*dt)/4);
+
+%% Absorbing boundaries
+r_damping=XYmax-Psi.damping_shift;%radius for top-hat damping
+a_damping=Psi.a_damping; %slope for the damping mesa
+damping=0.25*(1+tanh(a_damping*((x.^2+y.^2).^0.5+r_damping))).*(1+tanh(a_damping*(-(x.^2+y.^2).^0.5+r_damping)));
+%x_axis=-XYmax:Pmp.hspace:XYmax;
+%set int_r
+for it=floor(N/2+1):N
+    if damping(it,floor(N/2+1))<=0.95
+       Psi.int_r=(it-floor(N/2+1))*Pmp.hspace;
+       break;
+    end
+end
+
+%% Initialize psi
+Psi.initialize();
+psi=Psi.psi;
+n=Psi.n; %reservoir
+
+%% Saved data file name
+file_name_parameter=sprintf('GmaRr=%.1f_m0=%.1f_Pmp0=%.2f_l=%d_p=%d_w0=%d_XYmax=%d_N=%d_T=%d',Psi.GammaR/Psi.GammaC,Psi.Ini_m,Pmp.Pbar0,Pmp.l,Pmp.p,Pmp.w0,Pmp.XYmax,N,floor(TotalTime));
+Mov_file_name_psi=strcat('TorPsi_IncoPulse_',file_name_parameter);
+file_name=strcat('TorPsi_IncoPulse_',file_name_parameter);
+
+if Pse.force_pulse_time<=TotalTime
+    file_name_parameter=sprintf('m0=%.1f_Pmp0=%.2f_l=%d_p=%d_w0=%d_Pse0=%.1f_LP=%d_pP=%d_w0P=%d_OmegaP=%.4f_N=%d_T=%d',Psi.Ini_m,Pmp.Pbar0,Pmp.l,Pmp.p,Pmp.w0,Pse.Pbar0,Pse.l,Pse.p,Pse.w0,Pse.Omega,N,floor(TotalTime));
+    Mov_file_name_psi=strcat('TorPsi_',M.Simulation_version,'_IncoPulse_',file_name_parameter);
+    file_name=strcat('Psi_IcoPse_',file_name_parameter);
+end
+
+currentFolder = pwd;
+folder_name_parameter=sprintf('XYmax=%d',Pmp.XYmax);
+dataFolder=strcat('TorPsi_Single_',M.Simulation_version,'_IncoPulse_',folder_name_parameter);
+
+if exist(dataFolder,'dir')==0
+    mkdir(dataFolder);
+end
+
+%% GPU calculation initializing
+if M.GPU_calculation~=0
+    fprintf('\nGPU calculation enabled\n\n');
+    if M.GPU_calculation>=3
+        GPU_Device = gpuDevice(M.GPU_calculation-2);
+    else
+        GPU_Device = gpuDevice;
+    end
+    fprintf(['GPU Device: ',GPU_Device.Name,' selected.\n\n']);
+    kinetic_factor_quarter_gpu=gpuArray(kinetic_factor_quarter);
+    damping_gpu=gpuArray(damping);
+    if M.GPU_calculation>=2 %full GPU calculation
+        psi_gpu=gpuArray(psi);
+        n_gpu=gpuArray(n);
+        Pump_gpu=gpuArray(Pump);
+        dt_gpu=gpuArray(dt);
+        ua=gpuArray(ua);
+        gR=gpuArray(gR);
+        R=gpuArray(R);
+        hspace=gpuArray(Psi.hspace);
+        GammaC=gpuArray(GammaC);
+        GammaR=gpuArray(GammaR);
+        Energy_gpu=gpuArray(Psi.Energy);
+        Lz_gpu=gpuArray(Psi.Lz);
+        step_E_gpu=gpuArray(Psi.step_E);
+        int_area_gpu=gpuArray(Psi.int_area);
+        x_gpu=gpuArray(x);
+        y_gpu=gpuArray(y);
+        step_E=Psi.step_E;
+        
+        Energy_unmal_gpu=Energy_gpu;
+        psi_int_gpu=Energy_gpu;
+    end
+end
+
+%% FFT prepare
+fftw('planner','exhaustive');
+
+fprintf('\nCalculation begins\n\n');
+
+%% main calculation
+for step_i=1:floor(TotalTime/dt)
+    
+    time=double(step_i*dt);
+    
+    %% update pulse    
+    %Incoherent pulse
+    if Pulse_add_flag==0 %stage 1
+        if Pse.force_pulse_time<=time && (Pse.force_pulse_time+Pse.pulse_totaltime)>=time
+            fprintf('               pulse begins\n');
+            Pulse_add_flag=1;%enter state 2
+        end
+    end
+    if Pulse_add_flag==1 %stage 2
+        Pmp.time=time;
+        if Pmp.Omega~=0
+            Pmp.Update_u();
+        end
+        Pse.time=time-Pse.force_pulse_time;
+        Pse.Update_u();
+        Pump=abs(Pmp.u+Pse.u).^2;
+        if M.GPU_calculation>=2
+            Pump_gpu=gpuArray(Pump);
+        end
+        if (Pse.force_pulse_time+Pse.pulse_totaltime)<=time %stage 3
+            fprintf('               pulse ends\n')
+            Pmp.time=time;
+            Pmp.Update_u();
+            Pump=abs(Pmp.u).^2;
+            if M.GPU_calculation>=2
+                Pump_gpu=gpuArray(Pump);
+            end
+            Pmp.clear_all();
+            Pse.clear_all();
+            Pulse_add_flag=2;%enter state 3
+        end
+    end %pulse update end
+    
+    %%     
+    %Core calculation----------------------------------
+    if M.GPU_calculation>=2 %Full GPU calculation
+        
+        n_gpu=n_gpu.*exp(-(GammaR+R*abs(psi_gpu).^2)*dt_gpu)+Pump_gpu*dt_gpu;
+        psi1_gpu=ifft2((kinetic_factor_quarter_gpu.*fft2(psi_gpu)));
+        psi1_gpu=psi1_gpu.*(exp((ua*abs(psi1_gpu).^2+gR*n_gpu+0.5i*(R*n_gpu-GammaC))*(-1i)*dt_gpu));
+        psi_gpu=ifft2((kinetic_factor_quarter_gpu.*fft2(psi1_gpu))).*damping_gpu;
+        
+    else %CPU or Half GPU
+ 
+        %reservoirs update
+        n=n.*exp(-(GammaR+R*abs(psi).^2)*dt)+Pump*dt;
+
+        %advance spacially the first time
+        if M.GPU_calculation==1 %GPU FFT
+            psi1=gather(ifft2(kinetic_factor_quarter_gpu.*fft2(gpuArray(psi))));
+        else
+            psi1=ifft2((kinetic_factor_quarter.*fft2(psi)));
+        end
+        
+        %update psiL1,R1 by the pseudo-potential
+        psi1=psi1.*(exp((ua*abs(psi1).^2+gR*n+0.5i*(R*n-GammaC))*(-1i)*dt));
+       
+        %advance the second time with boundary condition (damping)
+        if M.GPU_calculation==1 %GPU FFT
+            psi=gather(ifft2((kinetic_factor_quarter_gpu.*fft2(gpuArray(psi1)))).*damping_gpu);
+     else
+            psi=ifft2((kinetic_factor_quarter.*fft2(psi1))).*damping;
+        end
+    end
+    %----------------------------------
+
+    %% status & data recording    
+    if Pulse_add_flag==1
+        fprintf('t = %.4f      Pulse added\n',time);
+    else   fprintf('t = %.4f\n',time);
+    end
+    
+    Psi_data_updated_flag=0;
+    
+    if M.GPU_calculation>=2
+        if  (Psi.record_psi~=0 && time>=Psi.re_psi_begin && time<=Psi.re_psi_end && (mod(step_i,floor(Psi.re_psi_dt/dt))==0))...
+                || (M.record_movie~=0 && time>=M.re_mov_begin && time<=M.re_mov_end && (mod(step_i,floor(M.re_mov_dt/dt))==0))
+            psi=gather(psi_gpu);
+            n=gather(n_gpu);
+        end
+    end
+    
+    %record Time Energy
+    if mod(step_i,Psi.E_step_interval)==0
+        
+        if M.GPU_calculation>=2 %record Energy within the GPU
+            
+            [psix, psiy]=gradient(psi_gpu,hspace);
+            mod_psi_square=abs(psi_gpu).^2;
+            psi_int_gpu(step_E_gpu)=hspace^2*sum(sum(mod_psi_square.*int_area_gpu));
+            
+            Lz_gpu(step_E_gpu)=hspace^2*sum(sum((-1i)*conj(psi_gpu).*(x_gpu.*psiy-y_gpu.*psix).*int_area_gpu))/psi_int_gpu(step_E_gpu);
+            
+            Energy_unmal_gpu(step_E_gpu)=(hspace^2*sum(sum((0.5*(abs(psix).^2+abs(psiy).^2)+gR*n_gpu.*mod_psi_square+0.5*ua*mod_psi_square.^2).*int_area_gpu)));
+            
+            Energy_gpu(step_E_gpu)=Energy_unmal_gpu(step_E_gpu)/psi_int_gpu(step_E_gpu);
+            
+            step_E_gpu=step_E_gpu+1;
+            
+            Time(step_E)=double(dt*step_i);
+            step_E=step_E+1;
+            
+        else %record Energy
+        Psi.step_i=step_i;
+        Psi.n=n;
+        Psi.psi=psi;
+        Psi_data_updated_flag=1;
+        Psi.record_Time_Energy();%Lz included
+        end
+    end
+    
+    %store trimmed psi
+    if Psi.record_psi~=0
+        if time>=Psi.re_psi_begin && time<=Psi.re_psi_end && (mod(step_i,floor(Psi.re_psi_dt/dt))==0)
+            if Psi_data_updated_flag==0
+                Psi.psi=psi;
+                Psi.n=n;
+            end
+            Psi.record_Psi();
+        end
+    end
+    
+    %% record Mov    
+    %record Psi Mov
+    if (M.record_movie~=0 && time>=M.re_mov_begin && time<=M.re_mov_end && (mod(step_i,floor(M.re_mov_dt/dt))==0) )|| ((M.record_movie~=0)&&((step_i==1)&& M.re_mov_begin==0))
+        
+        mod_psi=abs(psi);
+        mod_psi_square=mod_psi.^2;
+        phi=wrapToPi(angle(psi));
+        
+        if M.record_mov_psi~=0
+            
+            if M.re_psi_initialized==0 %psi windows and mesh initialization
+                
+                psi_fig=figure('position',[80 80 1000 700],'renderer','zbuffer');
+                M.re_psi_initialized=1;
+                M.mov_file_name_psi=Mov_file_name_psi;
+                M.currentFolder=currentFolder;
+                M.dataFolder=dataFolder;
+                
+                psi_plot=subplot(2,2,1);
+                mesh_psi=mesh(x,y,mod_psi_square);
+                axis square;
+                set(mesh_psi,'ZDataSource','mod_psi_square');
+                set(psi_plot,'xLim',[-XYmax XYmax],'yLim',[-XYmax XYmax],'fontsize',Psi.font_size);
+                xlabel('x');
+                ylabel('y');
+                view(0,90);
+                zoom(Psi.zoom_factor);
+                colorbar;
+                if Pulse_add_flag==1%Pse.force_pulse_time>=time && (Pse.force_pulse_time+Pse.pulse_totaltime)<=time
+                    st=sprintf('Pulse added        t=%.1f',time);
+                else   st=sprintf('                   t=%.1f',time);
+                end
+                title(psi_plot,{st;'|\psi|^2'});
+                
+                psi_plot2=subplot(2,2,2);
+                mesh_psi2=mesh(x,y,mod_psi_square);
+                axis square;
+                set(mesh_psi2,'ZDataSource','mod_psi_square');
+                set(psi_plot2,'xLim',[-XYmax XYmax],'yLim',[-XYmax XYmax],'fontsize',Psi.font_size);
+                xlabel('x');
+                ylabel('y');
+                zlabel('|\psi|^2');
+                colorbar;
+                
+                phi_plot=subplot(2,2,3);
+                mesh_phi=mesh(x,y,phi);
+                axis square;
+                set(mesh_phi,'ZDataSource','phi');
+                set(phi_plot,'xLim',[-XYmax XYmax],'yLim',[-XYmax XYmax],'zLim',[-pi pi],'fontsize',Psi.font_size);
+                xlabel('x');
+                ylabel('y');
+                view(0,90);
+                zoom(Psi.zoom_factor);
+                colorbar;
+                title('\phi');
+                
+                n_plot=subplot(2,2,4);
+                mesh_n=mesh(x,y,n);
+                axis square;
+                set(mesh_n,'ZDataSource','n');
+                set(n_plot,'xLim',[-XYmax XYmax],'yLim',[-XYmax XYmax],'fontsize',Psi.font_size);
+                xlabel('x');
+                ylabel('y');
+                view(0,90);
+                zoom(Psi.zoom_factor);
+                colorbar;
+                title('n');
+                
+            else
+                refreshdata(mesh_psi,'caller');
+                refreshdata(mesh_psi2,'caller');
+                refreshdata(mesh_phi,'caller');
+                refreshdata(mesh_n,'caller');
+                
+                if Pulse_add_flag==1
+                    st=sprintf('Pulse added        t=%.1f',time);
+                else   st=sprintf('                   t=%.1f',time);
+                end
+                title(psi_plot,{st;'|\psi|^2'});
+            end
+            M.Mov_psi(psi_fig);
+        end % psi movie end
+    end %record two movies end
+    
+end %end of main loop
+
+%% clean up movie writer
+if M.record_movie~=0
+    if ~isempty(M.vidObjpsi)
+        close(M.vidObjpsi);
+        close(psi_fig);
+    end
+end
+
+%% prepare for finial record
+if M.GPU_calculation>=2
+    Energy=gather(Energy_gpu);
+    Lz=gather(Lz_gpu);
+    psi=gather(psi_gpu);
+    n=gather(n_gpu);
+    
+    Energy_unmal=gather(Energy_unmal_gpu);
+    Psi_int=gather(psi_int_gpu);
+    %Time is recored during Energy_gpu
+else
+    Time=Psi.Time;
+    Energy=Psi.Energy;
+    Lz=Psi.Lz;
+    
+    Energy_unmal=Psi.Energy_unmal;
+    Psi_int=Psi.Psi_int;
+end
+
+%clean up GPU calculation parameters
+if M.GPU_calculation~=0
+    delete(GPU_Device);
+end
+
+%% draw final state and Energy evolution
+if numlabs==1 %no SPMD
+fig_E=figure('position',[50 80 1800 900],'PaperPositionMode','auto','renderer','zbuffer','Visible','off');
+
+subplot(2,2,1);
+mesh(x,y,abs(psi).^2)
+axis square;
+set(gca,'fontsize',Psi.font_size,'xLim',[-XYmax XYmax],'yLim',[-XYmax XYmax]);
+xlabel('x');
+ylabel('y');
+view(0,90);
+zoom(Psi.zoom_factor);
+colorbar;
+title('|\psi|^2');
+
+subplot(2,2,3)
+mesh(x,y,wrapToPi(angle(psi)));
+axis square;
+set(gca,'fontsize',Psi.font_size,'xLim',[-XYmax XYmax],'yLim',[-XYmax XYmax],'zLim',[-pi pi]);
+view(0,90);
+zoom(Psi.zoom_factor);
+colorbar;
+xlabel('x');
+ylabel('y');
+title('\phi');
+
+subplot(2,2,2)
+mesh(x,y,Pump);
+pos_tem=get(gca,'position');
+pos_tem(1)=0.3692;
+pos_tem2=pos_tem;
+set(gca,'position',pos_tem);
+axis square;
+set(gca,'fontsize',Psi.font_size,'xLim',[-XYmax XYmax],'yLim',[-XYmax XYmax]);
+view(0,90);
+zoom(Psi.zoom_factor);
+colorbar;
+xlabel('x');
+%ylabel('y');
+title('Pump');
+
+subplot(2,2,4);
+mesh(x,y,n);
+pos_tem=get(gca,'position');
+pos_tem(1)=0.3692;
+set(gca,'position',pos_tem);
+axis square;
+set(gca,'fontsize',Psi.font_size,'xLim',[-XYmax XYmax],'yLim',[-XYmax XYmax]);
+view(0,90);
+zoom(Psi.zoom_factor);
+colorbar;
+xlabel('x');
+%ylabel('y');
+title('n');
+
+%right bottom corner
+axes('position',[ 0.6420    0.1256    0.3347    0.3412]);
+plot(Time,Energy);
+pos_tem(1)=0.5859;
+set(gca,'position',pos_tem);
+set(gca,'fontsize',Psi.font_size);
+if max(num2str(get(gca,'YTick')))<1
+    set(gca,'YTickLabel',num2str(get(gca,'YTick')','%.2f'));
+end
+axis square;
+title('Energy (normalized)');
+
+%right upper corner
+pos_tem2(1)=0.5859;
+axes('position',pos_tem2);
+plot(Time,real(Lz));
+set(gca,'fontsize',Psi.font_size);
+axis square;
+title(sprintf('L_z (normalized)  m_0=%d;  L_z final=%.1f',Psi.Ini_m,real(Lz(length(Lz)))));
+
+saveas(fig_E,strcat(currentFolder,'\',dataFolder,'\',file_name,'.png'),'png');
+
+else %for SPMD
+    fig_E=figure('position',[100 100 800 800],'PaperPositionMode','auto','renderer','painter','Visible','off', 'PaperType', 'a4');
+    
+    plot(Psi.Time,Psi.Energy_unmal,'linewidth',2);
+    set(gca,'fontsize',Psi.font_size);
+    axis square;
+    xlabel('t');
+    title('Energy (un-normalized)');
+    
+    print(fig_E,'-dpng',strcat(currentFolder,'\',dataFolder,'\',file_name,'.png'));
+
+end
+close(fig_E);
+
+fprintf('Storing Data\n ');
+
+FS_fixed_int_r=Psi.int_r;
+Pmp.clear_all();
+Pse.clear_all();
+Psi.clear_all();
+M.clear_all();
+
+
+%% save data to mat file
+Ori_Pump_Parameter=Pmp;
+Finial_State=complex(0,zeros(N,N,2));
+Finial_State(:,:,1)=psi;
+Finial_State(:,:,2)=n;
+if Psi.record_psi~=0 %time series of psi is saved
+    record_psi_t=Psi.record_psi_t;
+    psi_trim=Psi.psi_trim;
+    n_trim=Psi.n_trim;
+    save(strcat(currentFolder,'\',dataFolder,'\',file_name,'.mat'),'Finial_State','N2_P_eff','N1_P_eff','P_eff','FS_fixed_int_r','Ori_Pump_Parameter','record_psi_t','psi_trim','n_trim','Time','Energy','Psi_int','Lz','-mat','-v7.3');
+else                 %save only the finial state
+    save(strcat(currentFolder,'\',dataFolder,'\','FinalState_',file_name,'.mat'),'N2_P_eff','N1_P_eff','P_eff','FS_fixed_int_r','Ori_Pump_Parameter','Time','Energy','Psi_int','Finial_State','Lz','-mat','-v7.3');
+end
+
+fprintf('\nSimulation function finished.\n\n')
+toc;
+
+end
+
+
+

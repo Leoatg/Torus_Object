@@ -34,3 +34,22 @@ Icon
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
+
+
+#Matlab data files
+*.mat
+*.fig
+
+#Figures
+*.png
+*.jpg
+*.eps
+*.ai
+
+#Video files
+*.avi
+*.mp4
+
+#Temporary documents
+*.pdf
+

@@ -1,0 +1,17 @@
+Control_Parmeters:
+
+File_name_append
+
+Perturbation_switch
+Pert_k_series
+Pert_Strength
+Pert_time
+Pert_Noise_Strength
+
+Tesla_Cool_down_period
+
+OS
+NoFigureWindow_Flag
+
+psi_points_theta
+psi_points_r0

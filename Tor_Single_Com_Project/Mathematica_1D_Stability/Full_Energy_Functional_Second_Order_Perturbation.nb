@@ -1,0 +1,295 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      8861,        286]
+NotebookOptionsPosition[      8209,        262]
+NotebookOutlinePosition[      8722,        282]
+CellTagsIndexPosition[      8679,        279]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Full", " ", "Energy", " ", "Functional", " ", 
+   RowBox[{"(", 
+    RowBox[{"G", " ", "stands", " ", 
+     RowBox[{"for", ":", " ", "generalized"}]}], ")"}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   SubscriptBox["E", "G"], "[", 
+   RowBox[{"\[Psi]", ",", "n"}], "]"}], "=", 
+  RowBox[{"\[Integral]", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       FractionBox["1", "2"], " ", 
+       SuperscriptBox[
+        RowBox[{"\[LeftBracketingBar]", 
+         RowBox[{"\[Del]", "\[Psi]"}], "\[RightBracketingBar]"}], "2"]}], "+", 
+      RowBox[{
+       FractionBox["g", "2"], 
+       SuperscriptBox[
+        RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}], 
+        "4"]}], "+", 
+      RowBox[{
+       SubscriptBox["g", "R"], "n", 
+       SuperscriptBox[
+        RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}], 
+        "2"]}], "+", 
+      RowBox[{
+       FractionBox["\[ImaginaryI]", "2"], " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          SubscriptBox["R", "1"], "n"}], "-", 
+         SubscriptBox["\[Gamma]", "c"]}], ")"}], 
+       SuperscriptBox[
+        RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}], 
+        "2"]}]}], "}"}], 
+    RowBox[{"\[DifferentialD]", "r", "\[IndentingNewLine]"}]}]}]}]}], "Input",
+ CellChangeTimes->{{3.6100680098738356`*^9, 3.6100680351282797`*^9}, {
+  3.610068085464159*^9, 3.610068140449304*^9}},
+ FontFamily->"Courier New",
+ FontSize->14,
+ FontWeight->"Plain"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+  "Conservative", " ", "approximation", " ", "energy", " ", "functional"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   SubscriptBox["E", "C"], "[", "\[Psi]", "]"}], "=", 
+  RowBox[{"\[Integral]", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       FractionBox["1", "2"], " ", 
+       SuperscriptBox[
+        RowBox[{"\[LeftBracketingBar]", 
+         RowBox[{"\[Del]", "\[Psi]"}], "\[RightBracketingBar]"}], "2"]}], "+", 
+      RowBox[{
+       FractionBox["g", "2"], 
+       SuperscriptBox[
+        RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}], 
+        "4"]}], "+", 
+      RowBox[{
+       SubscriptBox["g", "R"], 
+       SubscriptBox["n", "0"], 
+       SuperscriptBox[
+        RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}], 
+        "2"]}]}], "}"}], 
+    RowBox[{"\[DifferentialD]", "r"}]}]}]}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.610068065656026*^9, 3.6100681000049906`*^9}, {
+  3.6100681479967356`*^9, 3.61006816887693*^9}},
+ FontFamily->"Courier New",
+ FontSize->14,
+ FontWeight->"Plain"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{
+   "Up", " ", "to", " ", "second", " ", "order", " ", "expansion", " ", "of", 
+    " ", 
+    RowBox[{"(", 
+     RowBox[{
+      SubscriptBox["u", "0"], ",", 
+      SubscriptBox["v", "0"], ",", 
+      SubscriptBox["w", "0"]}], ")"}]}], ",", " ", 
+   RowBox[{"their", " ", "difference", " ", "is"}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   SuperscriptBox[
+    SubscriptBox["E", "G"], 
+    RowBox[{"(", "2", ")"}]], "=", 
+   RowBox[{
+    SuperscriptBox[
+     SubscriptBox["E", "C"], 
+     RowBox[{"(", "2", ")"}]], "+", 
+    SuperscriptBox[
+     SubscriptBox["E", "D"], 
+     RowBox[{"(", "2", ")"}]]}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"where", " ", 
+   SuperscriptBox[
+    SubscriptBox["E", "D"], 
+    RowBox[{"(", "2", ")"}]]}], "=", 
+  RowBox[{"\[Integral]", 
+   RowBox[{
+    RowBox[{"\[DifferentialD]", "r"}], 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        SubscriptBox["g", "R"], "+", 
+        RowBox[{
+         FractionBox["\[ImaginaryI]", "2"], 
+         SubscriptBox["R", "1"]}]}], ")"}], "2", " ", 
+      RowBox[{"Re", "[", 
+       RowBox[{
+        SubscriptBox["\[Psi]", "0"], " ", 
+        RowBox[{"\[Delta]\[Psi]", "\[Conjugate]"}]}], "]"}], "\[Delta]n"}], 
+     "}"}]}]}]}]}], "Input",
+ CellChangeTimes->{{3.610068176713378*^9, 3.6100682851465797`*^9}, {
+  3.610068336984545*^9, 3.6100683978940287`*^9}, {3.6100689954212055`*^9, 
+  3.610069024820887*^9}},
+ FontFamily->"Courier New",
+ FontSize->14,
+ FontWeight->"Plain"],
+
+Cell[BoxData[
+ RowBox[{"The", " ", "expression", " ", "of", " ", 
+  SuperscriptBox[
+   SubscriptBox["E", "C"], 
+   RowBox[{"(", "2", ")"}]], "is", " ", "the", " ", "same", " ", "as", " ", 
+  RowBox[{"(", "5.77", ")"}], " ", "in", " ", 
+  RowBox[{"Pitaevskii", "'"}], "s", " ", 
+  RowBox[{"book", ":"}]}]], "Input",
+ CellChangeTimes->{{3.6100684383373423`*^9, 3.6100684532231936`*^9}, {
+  3.610068498326773*^9, 3.6100685435503597`*^9}},
+ FontFamily->"Courier New",
+ FontSize->14,
+ FontWeight->"Plain"],
+
+Cell[BoxData[
+ RowBox[{
+  SuperscriptBox[
+   SubscriptBox["E", "C"], 
+   RowBox[{"(", "2", ")"}]], "=", 
+  RowBox[{"\[Integral]", 
+   RowBox[{
+    RowBox[{"\[DifferentialD]", "r"}], 
+    RowBox[{"{", 
+     RowBox[{"\[Omega]", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox[
+         RowBox[{"\[LeftBracketingBar]", 
+          SubscriptBox["u", "0"], "\[RightBracketingBar]"}], "2"], "-", 
+        SuperscriptBox[
+         RowBox[{"\[LeftBracketingBar]", 
+          SubscriptBox["v", "0"], "\[RightBracketingBar]"}], "2"]}], ")"}]}], 
+     "}"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.610068550245743*^9, 3.610068609166113*^9}},
+ FontFamily->"Courier New",
+ FontSize->14,
+ FontWeight->"Plain"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"After", " ", "integration", " ", 
+   RowBox[{"\[Integral]", 
+    RowBox[{
+     RowBox[{"\[DifferentialD]", 
+      RowBox[{"r", " ", "\[LongRightArrow]", " ", 
+       SubscriptBox["r", "0"]}]}], " ", 
+     RowBox[{
+      SubsuperscriptBox["\[Integral]", "0", 
+       RowBox[{"2", "\[Pi]"}]], 
+      RowBox[{"\[DifferentialD]", "\[Theta]"}]}]}]}]}], 
+  "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.610068619791721*^9, 3.6100686491493998`*^9}, {
+  3.6100688015431166`*^9, 3.6100688533120775`*^9}},
+ FontFamily->"Courier New",
+ FontSize->14,
+ FontWeight->"Plain"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    SuperscriptBox[
+     SubscriptBox["E", "G"], 
+     RowBox[{"(", "2", ")"}]], 
+    RowBox[{"(", "k", ")"}]}], "=", 
+   RowBox[{
+    SubscriptBox["r", "0"], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"2", "\[Pi]", " ", "\[Omega]", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox[
+          RowBox[{"\[LeftBracketingBar]", 
+           SubscriptBox["u", "0"], "\[RightBracketingBar]"}], "2"], "-", 
+         SuperscriptBox[
+          RowBox[{"\[LeftBracketingBar]", 
+           SubscriptBox["v", "0"], "\[RightBracketingBar]"}], "2"]}], ")"}]}],
+       "+", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         SubscriptBox["g", "R"], "+", 
+         RowBox[{
+          FractionBox["\[ImaginaryI]", "2"], 
+          SubscriptBox["R", "1"]}]}], ")"}], 
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox[
+          SubscriptBox["u", "0"], "r"], "+", 
+         SuperscriptBox[
+          SubscriptBox["v", "0"], "r"]}], ")"}], 
+       SubscriptBox["w", "0"], " ", "\[Pi]"}]}], ")"}]}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"where", " ", 
+  SuperscriptBox[
+   SubscriptBox["u", "0"], "r"], " ", "and", " ", 
+  SuperscriptBox[
+   SubscriptBox["v", "0"], "r"], " ", "are", " ", "real", " ", 
+  RowBox[{"parts", "."}]}]}], "Input",
+ CellChangeTimes->{{3.610068662293152*^9, 3.610068786934281*^9}, {
+  3.610068976901146*^9, 3.6100689793172846`*^9}},
+ FontFamily->"Courier New",
+ FontSize->14,
+ FontWeight->"Plain"]
+},
+WindowSize->{1352, 867},
+WindowMargins->{{125, Automatic}, {60, Automatic}},
+PrintingCopies->1,
+PrintingPageRange->{32000, 32000},
+PrintingOptions->{"Magnification"->1.,
+"PaperOrientation"->"Portrait",
+"PaperSize"->{595.1999999999999, 841.8}},
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (January 25, 2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 1562, 45, 217, "Input"],
+Cell[2122, 67, 1141, 33, 217, "Input"],
+Cell[3266, 102, 1587, 52, 253, "Input"],
+Cell[4856, 156, 500, 12, 63, "Input"],
+Cell[5359, 170, 710, 22, 93, "Input"],
+Cell[6072, 194, 606, 17, 140, "Input"],
+Cell[6681, 213, 1524, 47, 166, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)

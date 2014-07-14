@@ -1,0 +1,282 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      9746,        273]
+NotebookOptionsPosition[      9332,        255]
+NotebookOutlinePosition[      9845,        275]
+CellTagsIndexPosition[      9802,        272]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Full", " ", "Energy", " ", "Functional", " ", "Analysis"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"E", "[", 
+     RowBox[{"\[Psi]", ",", "n"}], "]"}], "=", 
+    RowBox[{"\[Integral]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         FractionBox["1", "2"], " ", 
+         SuperscriptBox[
+          RowBox[{"\[LeftBracketingBar]", 
+           RowBox[{"\[Del]", "\[Psi]"}], "\[RightBracketingBar]"}], "2"]}], 
+        "+", 
+        RowBox[{
+         FractionBox[
+          SubscriptBox["u", "a"], "2"], 
+         SuperscriptBox[
+          RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}],
+           "4"]}], "+", 
+        RowBox[{"n", 
+         SuperscriptBox[
+          RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}],
+           "2"]}], "+", 
+        RowBox[{
+         FractionBox["\[ImaginaryI]", "2"], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            SubscriptBox["R", "1"], "n"}], "-", 
+           SubscriptBox["\[Gamma]", "c"]}], ")"}], 
+         SuperscriptBox[
+          RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}],
+           "2"]}]}], "}"}], 
+      RowBox[{"\[DifferentialD]", "r"}]}]}]}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+     "The", " ", "GPE", " ", "can", " ", "be", " ", "obtained", " ", "by", 
+      " ", "applying", " ", "\[ImaginaryI]", " ", 
+      FractionBox[
+       RowBox[{"\[PartialD]", "\[Psi]"}], 
+       RowBox[{"\[PartialD]", "t"}]]}], "=", 
+     FractionBox[
+      RowBox[{"\[Delta]", " ", 
+       RowBox[{"E", "[", 
+        RowBox[{"\[Psi]", ",", "n"}], "]"}]}], 
+      RowBox[{"\[Delta]", " ", 
+       RowBox[{"\[Psi]", "\[Conjugate]"}]}]]}], " ", ",", 
+    RowBox[{"where", " ", 
+     RowBox[{"\[Psi]", "\[Conjugate]"}], " ", "is", " ", "complex", " ", 
+     "conjugate"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"I", " ", 
+     RowBox[{"denote", ":", "\[IndentingNewLine]", 
+      SubscriptBox["E", "C"]}]}], "=", 
+    RowBox[{"\[Integral]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         FractionBox["1", "2"], " ", 
+         SuperscriptBox[
+          RowBox[{"\[LeftBracketingBar]", 
+           RowBox[{"\[Del]", "\[Psi]"}], "\[RightBracketingBar]"}], "2"]}], 
+        "+", 
+        RowBox[{
+         FractionBox[
+          SubscriptBox["u", "a"], "2"], 
+         SuperscriptBox[
+          RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}],
+           "4"]}], "+", 
+        RowBox[{"n", 
+         SuperscriptBox[
+          RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}],
+           "2"]}]}], "}"}], 
+      RowBox[{"\[DifferentialD]", "r"}]}]}]}], "\[IndentingNewLine]", 
+   "       ", 
+   RowBox[{
+    SubscriptBox["E", "D"], "=", 
+    RowBox[{"\[Integral]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        FractionBox["\[ImaginaryI]", "2"], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           SubscriptBox["R", "1"], "n"}], "-", 
+          SubscriptBox["\[Gamma]", "c"]}], ")"}], 
+        SuperscriptBox[
+         RowBox[{"\[LeftBracketingBar]", "\[Psi]", "\[RightBracketingBar]"}], 
+         "2"]}], "}"}], 
+      RowBox[{"\[DifferentialD]", "r"}]}]}]}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+   "when", " ", "fluctions", " ", "were", " ", "introcuded", " ", "as"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"\[Psi]", "=", 
+    RowBox[{
+     SubscriptBox["\[Psi]", "0"], "+", "\[Delta]\[Psi]"}]}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"n", "=", 
+    RowBox[{
+     SubscriptBox["n", "0"], "+", "\[Delta]n"}]}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+    "The", " ", "first", " ", "order", " ", "perturbation", " ", "of", " ", 
+     "E", " ", "vanish", " ", 
+     RowBox[{"(", 
+      RowBox[{"steady", " ", "state", " ", "condition"}], ")"}]}], ",", 
+    RowBox[{
+    "keeping", " ", "only", " ", "the", " ", "second", " ", "order", " ", 
+     "term"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    SuperscriptBox[
+     SubscriptBox["E", "C"], 
+     RowBox[{"(", "2", ")"}]], "=", 
+    RowBox[{
+     SuperscriptBox[
+      SubscriptBox["E", "B"], 
+      RowBox[{"(", "2", ")"}]], "+", 
+     RowBox[{
+      SubscriptBox["n", "0"], " ", 
+      SuperscriptBox[
+       RowBox[{
+       "\[LeftBracketingBar]", "\[Delta]\[Psi]", "\[RightBracketingBar]"}], 
+       "2"]}], "+", 
+     RowBox[{"2", " ", 
+      RowBox[{"Re", "[", 
+       RowBox[{
+        SubscriptBox["\[Psi]", "0"], "\[Delta]\[Psi]", " ", "\[Delta]n"}], 
+       "]"}], "                ", 
+      RowBox[{"(", "1", ")"}]}]}]}], "\[IndentingNewLine]", 
+   RowBox[{
+    SuperscriptBox[
+     SubscriptBox["E", "D"], 
+     RowBox[{"(", "2", ")"}]], "=", 
+    RowBox[{"\[ImaginaryI]", " ", 
+     RowBox[{"Re", "[", 
+      RowBox[{
+       SubscriptBox["R", "1"], " ", 
+       RowBox[{
+        SubscriptBox["\[Psi]", "0"], "\[Conjugate]"}], " ", "\[Delta]\[Psi]", 
+       " ", "\[Delta]n"}], "]"}], "                                           ", 
+     RowBox[{"(", "2", ")"}]}]}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"where", " ", 
+    SuperscriptBox[
+     SubscriptBox["E", "B"], 
+     RowBox[{"(", "2", ")"}]], " ", "is", " ", "the", " ", "second", " ", 
+    "order", " ", "term", " ", "given", " ", "by", " ", "the", " ", 
+    "conservative", " ", "BEC", " ", "system"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "Discussions", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"1", " ", "the", " ", "conservative", " ", "part", " ", 
+     SuperscriptBox[
+      SubscriptBox["E", "C"], 
+      RowBox[{"(", "2", ")"}]], " ", "has", " ", "no", " ", "imaginary", " ", 
+     "component"}], ",", " ", 
+    RowBox[{
+     RowBox[{
+     "and", " ", "it", " ", "will", " ", "give", " ", "us", " ", "the", " ", 
+      "energy", " ", "stability", " ", "regime"}], ";"}]}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"the", " ", "dissipative", " ", "part", " ", 
+     SuperscriptBox[
+      SubscriptBox["E", "D"], 
+      RowBox[{"(", "2", ")"}]], " ", "has", " ", "no", " ", "real", " ", 
+     "component"}], ",", " ", 
+    RowBox[{
+     RowBox[{
+     "and", " ", "it", " ", "will", " ", "give", " ", "us", " ", "the", " ", 
+      "dynamical", " ", "stability", " ", 
+      RowBox[{"regime", ".", " ", "When"}], "  ", 
+      RowBox[{"Re", "[", 
+       RowBox[{
+        SubscriptBox["R", "1"], " ", 
+        RowBox[{
+         SubscriptBox["\[Psi]", "0"], "\[Conjugate]"}], " ", "\[Delta]\[Psi]",
+         " ", "\[Delta]n"}], "]"}]}], ">", "0"}], ",", " ", 
+    RowBox[{
+    "the", " ", "energy", " ", "will", " ", "grow", " ", "without", " ", 
+     "bounded"}], ",", " ", 
+    RowBox[{
+    "signaling", " ", "the", " ", "appearance", " ", "of", " ", "dynamical", 
+     " ", 
+     RowBox[{
+     "instablity", ".", "\[IndentingNewLine]", "\[IndentingNewLine]", "2"}], "  ",
+      "From", " ", "the", " ", "expression", " ", "of", " ", 
+     SuperscriptBox[
+      SubscriptBox["E", "C"], 
+      RowBox[{"(", "2", ")"}]]}], ",", 
+    RowBox[{
+     RowBox[{"when", " ", "\[Delta]n"}], "=", 
+     RowBox[{
+      RowBox[{"0", " ", "or", " ", 
+       SubscriptBox["n", "0"]}], "=", 
+      RowBox[{"0", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"given", " ", "by", " ", 
+          SubscriptBox["\[Gamma]", "c"]}], "\[Rule]", "0"}], ")"}]}]}]}], ",",
+     " ", 
+    RowBox[{
+    "the", " ", "energy", " ", "stability", " ", "is", " ", "given", " ", 
+     "by", " ", "the", " ", "M", " ", "matrix", " ", "in", " ", "our", " ", 
+     RowBox[{"draft", ".", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"when", " ", "\[Delta]n"}], "=", 
+         RowBox[{"0", " ", "the", " ", "extraterm", " ", 
+          SubscriptBox["n", "0"], " ", "in", " ", "the", " ", "linearlized", 
+          " ", "equation", " ", "can", " ", "be", " ", "absorbed", " ", 
+          "into", " ", "the", " ", "chenmical", " ", "potential"}]}], ",", 
+        RowBox[{
+        "making", " ", "M", " ", "has", " ", "the", " ", "same", " ", "form", 
+         " ", "as", " ", "the", " ", "one", " ", "in", " ", "our", " ", 
+         "draft"}]}], ")"}]}]}]}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.6065286246460733`*^9, 3.606528700951438*^9}, {
+  3.606528803761318*^9, 3.606528816092024*^9}, {3.6065288587164617`*^9, 
+  3.606529509652693*^9}, {3.6065295649328547`*^9, 3.6065297527936*^9}, {
+  3.6065300694037085`*^9, 3.606530318447953*^9}},
+ FontFamily->"Courier New",
+ FontWeight->"Plain"]
+},
+WindowSize->{1370, 867},
+WindowMargins->{{108, Automatic}, {Automatic, 48}},
+PrintingCopies->1,
+PrintingPageRange->{32000, 32000},
+PrintingOptions->{"Magnification"->1.,
+"PaperOrientation"->"Portrait",
+"PaperSize"->{595.1999999999999, 841.8}},
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (January 25, 2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 8771, 233, 1671, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)
