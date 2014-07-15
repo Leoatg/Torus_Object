@@ -2,8 +2,8 @@
 
 % stability analysis, dispertion analysis
 
-P1=2.1;
-GammaR=1.4;%0.96;
+P1=2.5;
+GammaR=1.7;%0.96;
 
 ua=7.7e-3;
 Gammac=1;
@@ -16,17 +16,17 @@ n0=Gammac/R1;
 Pth=(GammaR*Gammac)/R1;
 Phi0=sqrt((1/R1)*(P1*Pth/n0-GammaR));
 
-R0=22*sqrt(5/2);
+R0=24*sqrt(5/2);
 %R0=57;
 
-m=80;%persistent current m
-dk=0.1;
+m=4;%persistent current m
+dk=0.01;
 
-k=-180:dk:180; %k axis
+k=-30:dk:3; %k axis
 
-print_fig=0;
+print_fig=1;
 Record_Mov_m=0;
-m_max=80;
+m_max=70;
 
 Fontsize=18;
 
@@ -36,16 +36,12 @@ Eigen_omega_1=complex(zeros(1,N));%three eigen omega(k)
 Eigen_omega_2=complex(zeros(1,N));
 Eigen_omega_3=complex(zeros(1,N));
 
-E2_1=zeros(1,N);
-E2_2=E2_1;
-E2_3=E2_1;
-
 if Record_Mov_m~=0
     writerObj = VideoWriter('Dispersion_mov');
     writerObj.FrameRate=2;
     open(writerObj);
     
-    m_min=50;
+    m_min=0;
 else
     m_min=m;
     m_max=m;
@@ -53,7 +49,7 @@ end
 
 omega_temp=complex(zeros(3,1),0);
 omega_de=zeros(3,4);%set by column: 1 real part; 2 imaginary part; 3 amplitude; 4 angle
-for m=m_min:m_max
+for m=m_min:1:m_max
 
 for it=1:N
     
@@ -73,16 +69,6 @@ for it=1:N
     Eigen_omega_1(it)=complex(omega_de(1,1),omega_de(1,2));
     Eigen_omega_2(it)=complex(omega_de(2,1),omega_de(2,2));
     Eigen_omega_3(it)=complex(omega_de(3,1),omega_de(3,2));
-    
-    [V,D] = eig(L,'nobalance');
-    
-     E2_1(it)=D(1,1)*(abs(V(1,1))^2-abs(V(2,1))^2)*2*pi+(real(V(1,1))+real(V(2,1)))*V(3,1)*pi*(g+0.5i*R1);
-     E2_2(it)=D(2,2)*(abs(V(1,2))^2-abs(V(2,2))^2)*2*pi+(real(V(1,2))+real(V(2,2)))*V(3,2)*pi*(g+0.5i*R1);
-     E2_3(it)=D(3,3)*(abs(V(1,3))^2-abs(V(2,3))^2)*2*pi+(real(V(1,3))+real(V(2,3)))*V(3,3)*pi*(g+0.5i*R1);
-    
-%      E2_1(it)=D(1,1)*(abs(V(1,1))^2-abs(V(2,1))^2)*2*pi;%+(real(V(1,1))+real(V(2,1)))*V(3,1)*pi*(g+0.5i*R1);
-%      E2_2(it)=D(2,2)*(abs(V(1,2))^2-abs(V(2,2))^2)*2*pi;%+(real(V(1,2))+real(V(2,2)))*V(3,2)*pi*(g+0.5i*R1);
-%      E2_3(it)=D(3,3)*(abs(V(1,3))^2-abs(V(2,3))^2)*2*pi;%+(real(V(1,3))+real(V(2,3)))*V(3,3)*pi*(g+0.5i*R1);
 end
 
 if m==m_min || Record_Mov_m==0
@@ -92,32 +78,33 @@ axis_im=subplot(1,2,2);
 end
 
 axis_re=subplot(1,2,1);
-plot(axis_re,k,real(Eigen_omega_1),'linewidth',2);
+plot(axis_re,k,real(Eigen_omega_1),'linewidth',2,'color','m');
 axis square;
 set(axis_re,'fontsize',Fontsize);
+set(gca,'xlim',[-30,3]);
+set(gca,'ylim',[-1 1]);
 xlabel('k');
 ylabel('Re \omega');
 title(axis_re,sprintf('m=%d, Gamma_R=%.2f, P bar=%.2f, R0=%.1f',m,GammaR,P1,R0));
 hold(axis_re,'all');
-plot(axis_re,k,real(Eigen_omega_2),'linewidth',2);
-plot(axis_re,k,real(Eigen_omega_3),'linewidth',2);
+plot(axis_re,k,real(Eigen_omega_2),'linewidth',2,'color',[0 150 0]/255);
+plot(axis_re,k,real(Eigen_omega_3),'linewidth',2,'color','b');
 plot(axis_re,k,zeros(1,N),'linestyle','-.','linewidth',2);
 hold(axis_re,'off');
-legend('\omega_1','\omega_2','\omega_3');
 
 
 axis_im=subplot(1,2,2);
-plot(axis_im,k,imag(Eigen_omega_1),'linewidth',2);
+plot(axis_im,k,imag(Eigen_omega_1),'linewidth',2,'color','m');
 axis square;
 set(axis_im,'fontsize',Fontsize);
+set(gca,'xlim',[-30,3]);
 xlabel('k');
 ylabel('Imag \omega');
 hold all
 plot(axis_im,k,zeros(1,N),'linestyle','-.','linewidth',2);
-plot(axis_im,k,imag(Eigen_omega_2),'linewidth',2);
-plot(axis_im,k,imag(Eigen_omega_3),'linewidth',2);
+plot(axis_im,k,imag(Eigen_omega_2),'linewidth',2,'color',[0 150 0]/255);
+plot(axis_im,k,imag(Eigen_omega_3),'linewidth',2,'color','b');
 hold off
-legend('\omega_1','\omega_2','\omega_3');
 %finding critical m by derivertive
 % Im_omega_t=imag(Eigen_omega_2);
 % Im_omega_t_diff=diff(Im_omega_t)/dk;
@@ -136,10 +123,10 @@ for it=2:length(Im_omega_t)
        break;
     end
 end
-if it~=length(Im_omega_t) || ((it==length(Im_omega_t)) && Im_omega_t(length(Im_omega_t))>0)
-text(k(it),Im_omega_t(it),'\bullet','fontsize',20,'HorizontalAlignment','center');
-title(axis_im,sprintf('k*1=%.2f',k(it)));
- end
+% if it~=length(Im_omega_t) || ((it==length(Im_omega_t)) && Im_omega_t(length(Im_omega_t))>0)
+% text(k(it),Im_omega_t(it),'\bullet','fontsize',20,'HorizontalAlignment','center');
+% title(axis_im,sprintf('k*1=%.2f',k(it)));
+%  end
 % diff_k_axis=k(1:length(Im_omega_t_diff));
 % figure;
 % plot(diff_k_axis,Im_omega_t_diff);
@@ -150,48 +137,8 @@ end
 
 end
 
-
-% k=-50;
-% 
-% L=[((m+k)^2-m^2)/(2*R0^2)+ua*Phi0^2, ua*Phi0^2, (g+0.5i*R1)*Phi0;
-%         -ua*Phi0^2, -(((m-k)^2-m^2)/(2*R0^2)+ua*Phi0^2), -(g-0.5i*R1)*Phi0;
-%         -1i*R1*Phi0*n0, -1i*R1*Phi0*n0, -1i*(GammaR+R1*Phi0^2)];
-% 
-% [V,D] = eig(L,'nobalance');
-
-%plot E^(2)
-fig_E2_re=figure('renderer','painter','position',[100 100+100 1600 800],'paperpositionmode','auto');
-plot(gca,k,real(E2_1),'linewidth',2);
-set(gca,'ylim',[-1,1]);
-set(gca,'fontsize',Fontsize);
-xlabel('k');
-hold all
-plot(gca,k,real(E2_2),'linewidth',2);
-plot(gca,k,real(E2_3),'linewidth',2);
-hold off
-title('Re E2')
-h_l=legend('$E^{(2)} 1$','$E^{(2)} 2$','$E^{(2)} 3$');
-set(h_l,'Interpreter','latex');
-
-% figure;
-% plot(gca,k,real(E2_1)+real(E2_2)+real(E2_3),'linewidth',2);
-% title('Sum E2')
-
-fig_E2_im=figure('renderer','painter','position',[100 100 1600 800],'paperpositionmode','auto');
-plot(gca,k,imag(E2_1),'linewidth',2);
-set(gca,'fontsize',Fontsize);
-xlabel('k');
-hold all
-plot(gca,k,imag(E2_2),'linewidth',2);
-plot(gca,k,imag(E2_3),'linewidth',2);
-hold off
-title('Im E2')
-h_l=legend('$E^{(2)} 1$','$E^{(2)} 2$','$E^{(2)} 3$');
-set(h_l,'Interpreter','latex');
-
-
 if print_fig~=0 && Record_Mov_m==0
-print(gcf,'-painter','-dpng','-r250',sprintf('Dispersion_Curve_m=%d_GammaR=%.1f_P1=%.1f_R0=%.1f.png',m,GammaR,P1,R0));
+print(gcf,'-painters','-dpng','-r350',sprintf('Dispersion_Curve_m=%d_GammaR=%.2f_P1=%.1f_R0=%.1f.png',m,GammaR,P1,R0));
 close(fig_disp);
 end
 
